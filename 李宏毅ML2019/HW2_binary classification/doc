@@ -1,0 +1,33 @@
+二分类
+用两个模型进行实验，概率生成模型、逻辑回归模型。
+
+数据集：成人的薪资分类，>50K, <=50K.
+age: continuous.
+workclass: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked.
+fnlwgt: continuous.
+education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool.
+education-num: continuous.
+marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse.
+occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces.
+relationship: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried.
+race: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black.
+sex: Female, Male.
+capital-gain: continuous.
+capital-loss: continuous.
+hours-per-week: continuous.
+native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands.
+
+年龄 工作性质 fnlwgt 教育 受教育时间 婚姻状况 职业 关系 人种 性别 资本收益 资本损失 每周工作时间 祖国
+
+连续的特征用原值表示：
+年龄 fnlwgt 受教育时间 资本收益 资本损失 每周工作时间 性别 2
+
+离散的变量用one-hot表示：
+工作性质 8 教育 16 婚姻状况 7 职业 14 关系 6 人种 5  祖国 41
+
+概率生成模型：
+1.加载数据,(在github找的已经生成特征的数据集) 取训练集特征的均值和方差，规范化数据
+2.训练参数。假设x服从多元高斯函数，分别训练出参数mean_0, mean_1, cov_0, cov_1, (有参数估计变量计算公式)，然后根据参数估计值计算权重和偏差
+3.预测函数。代入测试集，计算出z值，由sigmoid激活函数预测label值。
+需要注意的是，c1是0（<=50k），c2是1（>50k）,激活函数预测的结果是c1的概率大于c2的概率时，z值大于0，sigmoid函数值大于0.5，预测结果是1，反之，预测结果是0，所以最后正确的预测结果应该是abs(sigmoid(z)-1)
+4.评估准确率。预测正确的概率是# 0.843744241754192
