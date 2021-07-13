@@ -1,0 +1,53 @@
+任务：图片分类。
+数据集：    
+    food-11文件夹是来自11种食物的图片，并分为training set, validation set, test set, 图片文件名为“类别编号_图片序号”,其中test set 除外。
+
+模块：
+    os,取文件列表和文件路径，指定gpu块
+    cv2,读取图片，缩放图片
+    numpy,cv2读取的图片放在numpy中，实现tensor和numpy的转换，numpy运算
+    torch,优化算法
+    torch.nn,模型基类
+    torchvision.transform,图片（数据）变换
+    torch.utils.data,数据集基类，转为标准数据集格式，数据加载基类，分为不同的batch
+    time,统计模型训练时间
+
+读取图片：
+    定义numpy变量x,y,元素初始化为0，用cv2.imread读取每一个路径上的图片，用cv2.resize缩放图片到（128,128），然后存到x中，取图片文件名中的label存到y中。
+    
+    训练集，验证集和测试集都按上述过程读取图片数据。
+    因此可以将读取过程写成一个readfile函数，其中训练集和验证集，返回label，测试集不返回label。
+
+数据格式化和数据增强：
+    transfrom.Compose([])设置转换格式，创建img数据集类，继承自Dataset类，属性分别为x,y,transform,重写__init__,__len__,__getitem__方法，使用DataLoader加载数据集，加载的时候，按照index调用__getitem__一个一个加载数据。
+ 
+ 创建模型类：
+     继承自nn.Module.
+     初始化：定义5层卷积层，卷积-》归一化-》激活函数-》池化
+         定义输出层线性变换，线性模型-》激活-》线性-》激活-》线性
+     重写forword函数，也就是整个模型的运行流程。
+ 
+ 训练：
+     定义模型变量。
+     定义交叉熵损失函数。
+     定义优化算法。
+     定义epoch值。
+     每层epoch中，对dataset_loader按batch训练优化。并按batch累加精确度和损失。
+ 
+更好的训练：
+    training set 和 val set合并到一起，用更多的数据训练。
+   
+测试：
+    用训练好的模型，训练测试集数据，并把预测结果保存到csv文件中。
+
+
+
+####################################################################################################
+tips:
+1.pytorch指定gpu的方式：
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"，这一句必须加在import torch之前，紧跟import os之后。
+
+2.在每一个epoch训练的时候，model.train()让模型变成训练模式，此时dropout和Batch Normalization在训练的时候起到防止网络过拟合的作用；model.eval()会自动把BN和dropout固定住，不会取平均值，而是训练好的值。
+
+
+    
